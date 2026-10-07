@@ -1,39 +1,20 @@
 ---
 import type { GetStaticPaths } from 'astro';
+import type { IPokemonListResponse } from "../../interfaces/pokemon-list.response";
+
 import MainLayout from "../../layouts/MainLayout.astro";
 import PokemonCard from "../../components/PokemonCard.astro";
 
-export const getStaticPaths = ( () => {
-    return [
-        { 
-            params: { name: 'bulbasaur' },
-            props: {
-                name: 'bulbasaur',
-                url: 'https://pokeapi.co/api/v2/pokemon/1/'
-            }
-        },
-        { 
-            params: { name: 'ivysaur' },
-            props: {
-                name: 'ivysaur',
-                url: 'https://pokeapi.co/api/v2/pokemon/2/'
-            }
-        },
-        { 
-            params: { name: 'venusaur' },
-            props: {
-                name: 'venusaur',
-                url: 'https://pokeapi.co/api/v2/pokemon/3/'
-            }
-        },
-        { 
-            params: { name: 'charmander' },
-            props: {
-                name: 'charmander',
-                url: 'https://pokeapi.co/api/v2/pokemon/4/'
-            }
-        },
-    ];
+export const getStaticPaths = ( async () => {
+    const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+    const { results } = await resp.json() as IPokemonListResponse;
+    return results.map( (pokemon) => ({
+        params: { name: pokemon.name },
+        props: {
+            name: pokemon.name,
+            url: pokemon.url
+        }
+    }))
 }) satisfies GetStaticPaths;
 
 const { name } = Astro.params;
@@ -43,16 +24,20 @@ const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pok
 ---
 <MainLayout title={`Pokemon Static | ${name}`}>
     <section class="mt-10 mx-10 flex flex-col justify-center items-center">
-        <div>
-            <a href="/" class="bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600">
+        <article>
+            <a href="/" class="text-white py-2 rounded-md">
                 Regresar
             </a>
-            <h1 class="text-5xl font-mono mt-6">{name.toLocaleUpperCase()}</h1>
-            <PokemonCard name={name} url={url} />
-            <audio controls class="mt-4">
-                <source src={audioSrc} type="audio/ogg" />
-                Your browser does not support the audio element.
-            </audio>
-        </div>
+            <h1 class="text-4xl text-center font-mono mt-6">
+                {name.toLocaleUpperCase()}
+            </h1>
+            <PokemonCard name={name} url={url} isFull />
+            <div class="flex justify-center items-center">
+                <audio controls class="mt-4 ">
+                    <source src={audioSrc} type="audio/ogg" />
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </article>
     </section>
 </MainLayout>

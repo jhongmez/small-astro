@@ -2,19 +2,31 @@
 interface Props {
     url: string;
     name: string;
+    isFull?: boolean;
 }
-const { url, name } = Astro.props as Props;
+const { url, name, isFull = false } = Astro.props as Props;
 const id = url.split('/').at(-2);
 const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+
+const hiddenName = !isFull ? name : '';
 ---
 
-<a href={`/pokemons/${name}`} class="bg-pink-500 bg-cover rounded-md flex flex-col justify-center items-center p-2">
-    <img
-        src={imageSrc}
-        alt={name}
-        class="w-full h-40 object-contain"
-    />
-    <span class="text-center capitalize font-mono">
-        {name}
-    </span>
+<a 
+	href={`/pokemons/${name}`}
+	class:list={[
+		`bg-cover rounded-md flex flex-col justify-center items-center p-2`,
+		!isFull && 'bg-pink-500' // Si isFull es false, se aplicará el color de fondo rosa
+	]}
+>
+	<img
+		src={imageSrc}
+		alt={name}
+		class:list={[
+			`w-full object-contain`,
+			isFull ? 'h-80' : 'h-40' // Si isFull es true, la altura será 80, de lo contrario será 40
+		]}
+	/>
+	<span class="text-center capitalize font-mono">
+		{hiddenName}
+	</span>
 </a>
