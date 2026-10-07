@@ -1,0 +1,45 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import PokemonCard from '../../components/PokemonCard.astro'
+import type { GetStaticPaths } from 'astro';
+import type { IPokemonListResponse } from '../../interfaces/pokemon-list.response';
+
+export const getStaticPaths = ( async ({ paginate }) => {
+	const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+	const { results } = await resp.json() as IPokemonListResponse;
+	return paginate(results, { pageSize: 20 });
+}) satisfies GetStaticPaths;
+
+const title: string = 'Pokemon Static | Inicio';
+const { page } = Astro.props
+---
+
+<MainLayout title={title}>
+	<h1 class="text-3xl mb-4">
+		Listado de Pokemones
+	</h1>
+	<hr>
+	<section
+		aria-label="Listado de Pokemones"
+		class="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4 mt-10"
+	>
+		{ page.data.map( ({ name, url }) => <PokemonCard name={name} url={url} /> ) }
+	</section>
+
+	<section class="flex mt-10 gap-2 items-center">
+		<a href={page.url.prev} class="btn">Anterior</a>
+		<a href={page.url.next} class="btn">Siguiente</a>
+		<div class="flex flex-1"></div>
+		<span>
+			Página {page.url.current.at(-1)}
+		</span>
+	</section>
+</MainLayout>
+
+<style>
+	@reference "tailwindcss";
+	
+    .btn {
+        @apply bg-gray-200 text-black font-mono py-2 px-4 rounded-md; 
+    }
+</style>
