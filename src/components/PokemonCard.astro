@@ -1,6 +1,4 @@
 ---
-import type { IPokemonListResponse } from '../interfaces/pokemon-list.response';
-
 interface Props {
     url: string;
     name: string;
@@ -10,13 +8,13 @@ const id = url.split('/').at(-2);
 const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 ---
 
-<div class="bg-pink-500 bg-cover rounded-md flex flex-col justify-center items-center p-2">
+<a href={`/pokemons/${name}`} class="bg-pink-500 bg-cover rounded-md flex flex-col justify-center items-center p-2">
     <img
-    src={imageSrc}
-    alt={name}
-    class="w-full h-40 object-contain"
+        src={imageSrc}
+        alt={name}
+        class="w-full h-40 object-contain"
     />
     <span class="text-center capitalize font-mono">
         {name}
     </span>
-</div>
+</a>
