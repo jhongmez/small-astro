@@ -27,8 +27,24 @@ const { page } = Astro.props
 	</section>
 
 	<section class="flex mt-10 gap-2 items-center">
-		<a href={page.url.prev} class="btn">Anterior</a>
-		<a href={page.url.next} class="btn">Siguiente</a>
+		<a 
+			href={page.url.prev} 
+			class:list={[
+				`btn`,
+				!page.url.prev && 'disabled' // Si no hay página anterior, se aplicará la clase "disabled" para deshabilitar el enlace
+			]}
+		>
+			Anterior
+		</a>
+		<a 
+			href={page.url.next} 
+			class:list={[
+				`btn`,
+				!page.url.next && 'disabled' 
+			]}
+		>
+			Siguiente
+		</a>
 		<div class="flex flex-1"></div>
 		<span>
 			Página {page.url.current.at(-1)}
@@ -42,4 +58,7 @@ const { page } = Astro.props
     .btn {
         @apply bg-gray-200 text-black font-mono py-2 px-4 rounded-md; 
     }
+	.disabled {
+		@apply bg-gray-400 text-gray-600 cursor-not-allowed;
+	}
 </style>

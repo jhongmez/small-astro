@@ -1,0 +1,49 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import PokemonCard from "../../components/PokemonCard.astro";
+
+import type { IPokemonListResponse } from "../../interfaces/pokemon-list.response";
+import type { GetStaticPaths } from 'astro';
+
+interface Props {
+    url: string;
+    name: string;
+    isFull?: boolean;
+}
+
+export const getStaticPaths = ( async () => {
+    const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+    const { results } = await resp.json() as IPokemonListResponse;
+    return results.map( ({ name, url }) => {
+        const id =  url.split('/').at(-2);
+        return {
+            params: { id: id },
+            props: { name: name, url: url }
+        }
+    })
+})satisfies GetStaticPaths;
+
+const { id } = Astro.params;
+const { url, name, isFull = false } = Astro.props as Props;
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+
+---
+<MainLayout title="Pokemon Static">
+    <section class="mt-10 mx-10 flex flex-col justify-center items-center">
+        <article>
+            <a href="/" class="text-white py-2 rounded-md">
+                Regresar
+            </a>
+            <h1 class="text-4xl text-center font-mono mt-6">
+                {name.toLocaleUpperCase()}
+            </h1>
+            <PokemonCard name={name} url={url} isFull />
+            <div class="flex justify-center items-center">
+                <audio controls class="mt-4 ">
+                    <source src={audioSrc} type="audio/ogg" />
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </article>
+    </section>
+</MainLayout>
