@@ -19,6 +19,7 @@ const hiddenName = !isFull ? name : '';
 	]}
 >
 	<img
+		transition:name={`${name}-image`}
 		src={imageSrc}
 		alt={name}
 		class:list={[
